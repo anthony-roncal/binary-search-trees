@@ -43,9 +43,49 @@ function Tree() {
         return unique;
     }
 
+    function insertNode(root, value) {
+        let node = nodeFactory(value);
+        if(root === null) {
+            root = node;
+            return root;
+        }
+        if(root.value > value)
+            root.left = insertNode(root.left, value);
+        else if(root.value < value)
+            root.right = insertNode(root.right, value);
+        return root;
+    }
+
+    function deleteNode(root, value) {
+        if(root === null)
+            return root;
+
+        if(root.value > value)
+            root.left = deleteNode(root.left, value);
+        else if(root.value < value)
+            root.right = deleteNode(root.right, value);
+        else {
+            if(root.left === null)
+                return root.right;
+            else if(root.right === null)
+                return root.left;
+
+            let rightTreeMin = root.right;
+            while(rightTreeMin.left !== null) {
+                rightTreeMin = rightTreeMin.left;
+            }
+            root.value = rightTreeMin.value;
+            root.right = deleteNode(root.right, root.value);
+        }
+
+        return root;
+    }
+
     return {
         root,
-        buildTree
+        buildTree,
+        insertNode,
+        deleteNode
     };
 }
 
@@ -64,4 +104,10 @@ let tree = Tree();
 // let testArray = [1, 2, 3, 4, 5];
 let testArray = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
 tree.root = tree.buildTree(testArray, 0, testArray.length-1);
+console.log(`tree.root = ${tree.root}`);
+
+tree.insertNode(tree.root, 15);
+console.log(`tree.root = ${tree.root}`);
+
+tree.deleteNode(tree.root, 7);
 console.log(`tree.root = ${tree.root}`);
