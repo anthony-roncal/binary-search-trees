@@ -81,11 +81,24 @@ function Tree() {
         return root;
     }
 
+    function findNode(root, value) {
+        if(root === null)
+            return root;
+
+        if(root.value === value)
+            return root;
+        else if(root.value > value)
+            return findNode(root.left, value);
+        else if(root.value < value)
+            return findNode(root.right, value);
+    }
+
     return {
         root,
         buildTree,
         insertNode,
-        deleteNode
+        deleteNode,
+        findNode
     };
 }
 
@@ -111,3 +124,5 @@ console.log(`tree.root = ${tree.root}`);
 
 tree.deleteNode(tree.root, 7);
 console.log(`tree.root = ${tree.root}`);
+
+console.log(tree.findNode(tree.root, 4));
