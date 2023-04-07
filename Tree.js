@@ -3,15 +3,15 @@ function Tree() {
     let root = null;
 
     function buildTree(array, start, end) {
-        let sortedArray = mergeSort(removeDuplicates(array));
         if(start > end)
             return null;
-        let mid = parseInt((start + end)/2);
-        let node = nodeFactory(sortedArray[mid]);
-        node.left = buildTree(sortedArray, start, mid-1);
-        node.right = buildTree(sortedArray, mid+1, end);
-
-        return node;
+        else {    
+            let mid = parseInt((start + end)/2);
+            let node = nodeFactory(array[mid]);
+            node.left = buildTree(array, start, mid-1);
+            node.right = buildTree(array, mid+1, end);
+            return node;
+        }
     }
 
     function mergeSort(array) {
@@ -43,27 +43,27 @@ function Tree() {
         return unique;
     }
 
-    function insertNode(root, value) {
-        let node = nodeFactory(value);
+    function insertNode(root, data) {
+        let node = nodeFactory(data);
         if(root === null) {
             root = node;
             return root;
         }
-        if(root.value > value)
-            root.left = insertNode(root.left, value);
-        else if(root.value < value)
-            root.right = insertNode(root.right, value);
+        if(root.data > data)
+            root.left = insertNode(root.left, data);
+        else if(root.data < data)
+            root.right = insertNode(root.right, data);
         return root;
     }
 
-    function deleteNode(root, value) {
+    function deleteNode(root, data) {
         if(root === null)
             return root;
 
-        if(root.value > value)
-            root.left = deleteNode(root.left, value);
-        else if(root.value < value)
-            root.right = deleteNode(root.right, value);
+        if(root.data > data)
+            root.left = deleteNode(root.left, data);
+        else if(root.data < data)
+            root.right = deleteNode(root.right, data);
         else {
             if(root.left === null)
                 return root.right;
@@ -74,55 +74,140 @@ function Tree() {
             while(rightTreeMin.left !== null) {
                 rightTreeMin = rightTreeMin.left;
             }
-            root.value = rightTreeMin.value;
-            root.right = deleteNode(root.right, root.value);
+            root.data = rightTreeMin.data;
+            root.right = deleteNode(root.right, root.data);
         }
 
         return root;
     }
 
-    function findNode(root, value) {
+    function findNode(root, data) {
         if(root === null)
             return root;
 
-        if(root.value === value)
+        if(root.data === data)
             return root;
-        else if(root.value > value)
-            return findNode(root.left, value);
-        else if(root.value < value)
-            return findNode(root.right, value);
+        else if(root.data > data)
+            return findNode(root.left, data);
+        else if(root.data < data)
+            return findNode(root.right, data);
+    }
+
+    function levelOrder(root, func) {
+        let queue = [];
+        let data = [];
+        if(root) {
+            queue.push(root);
+        }
+        while(queue.length > 0) {
+            temp = queue.shift();
+            (func) ? func(root.data) : data.push(temp.data);
+            if(temp.left) {
+                queue.push(temp.left);
+            }
+            if(temp.right) {
+                queue.push(temp.right);
+            }
+        }
+        return data;
+    }
+
+    function inOrder(root, func) {
+        if(root === null) 
+            return;
+        else {
+            if(root.left) {
+                inOrder(root.left);
+            }
+            (func) ? func(root.data) : console.log(root.data);
+            if(root.right) {
+                inOrder(root.right);
+            }
+        }
+    }
+
+    function preOrder(root, func) {
+        if(root === null) 
+            return;
+        else {
+            (func) ? func(root.data) : console.log(root.data);
+            if(root.left) {
+                preOrder(root.left);
+            }
+            if(root.right) {
+                preOrder(root.right);
+            }
+        }
+    }
+
+    function postOrder(root, func) {
+        if(root === null) 
+            return;
+        else {
+            if(root.left) {
+                postOrder(root.left);
+            }
+            if(root.right) {
+                postOrder(root.right);
+            }
+            (func) ? func(root.data) : console.log(root.data);
+        }
     }
 
     return {
         root,
+        mergeSort,
+        removeDuplicates,
         buildTree,
         insertNode,
         deleteNode,
-        findNode
+        findNode,
+        levelOrder,
+        inOrder,
+        preOrder, 
+        postOrder
     };
 }
 
-const nodeFactory = (value) => {
+const nodeFactory = (data) => {
     return {
-        value: value,
+        data: data,
         left: null,
         right: null,
         toString: function() {
-            return `{value: ${this.value}, left: ${this.left}, right: ${this.right}}`;
+            return `{data: ${this.data}, left: ${this.left}, right: ${this.right}}`;
         }
     }
 }
 
+const prettyPrint = (node, prefix = '', isLeft = true) => {
+    if (node === null) {
+       return;
+    }
+    if (node.right !== null) {
+      prettyPrint(node.right, `${prefix}${isLeft ? '│   ' : '    '}`, false);
+    }
+    console.log(`${prefix}${isLeft ? '└── ' : '┌── '}${node.data}`);
+    if (node.left !== null) {
+      prettyPrint(node.left, `${prefix}${isLeft ? '    ' : '│   '}`, true);
+    }
+  }
+
 let tree = Tree();
-// let testArray = [1, 2, 3, 4, 5];
 let testArray = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
+testArray = tree.mergeSort(tree.removeDuplicates(testArray));
 tree.root = tree.buildTree(testArray, 0, testArray.length-1);
-console.log(`tree.root = ${tree.root}`);
+console.log(prettyPrint(tree.root));
 
-tree.insertNode(tree.root, 15);
-console.log(`tree.root = ${tree.root}`);
+// tree.insertNode(tree.root, 15);
+// console.log(prettyPrint(tree.root));
 
-tree.deleteNode(tree.root, 7);
-console.log(`tree.root = ${tree.root}`);
+// tree.deleteNode(tree.root, 7);
+// console.log(prettyPrint(tree.root));
 
-console.log(tree.findNode(tree.root, 4));
+// console.log(tree.findNode(tree.root, 4));
+
+// console.log(tree.levelOrder(tree.root));
+// tree.inOrder(tree.root);
+// tree.preOrder(tree.root);
+// tree.postOrder(tree.root);
