@@ -154,6 +154,18 @@ function Tree() {
         }
     }
 
+    function height(node) {
+        let height = 0;
+        while(node.left || node.right) {
+            height++;
+            if(node.left) 
+                node = node.left;
+            else if(node.right)
+                node = node.right;
+        }
+        return height;
+    }
+
     return {
         root,
         mergeSort,
@@ -165,7 +177,8 @@ function Tree() {
         levelOrder,
         inOrder,
         preOrder, 
-        postOrder
+        postOrder,
+        height
     };
 }
 
@@ -211,3 +224,5 @@ console.log(prettyPrint(tree.root));
 // tree.inOrder(tree.root);
 // tree.preOrder(tree.root);
 // tree.postOrder(tree.root);
+
+// console.log('height = ' + tree.height(tree.findNode(tree.root, 4)));
