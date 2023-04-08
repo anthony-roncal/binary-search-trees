@@ -176,6 +176,10 @@ function Tree() {
         return depth;
     }
 
+    function isBalanced() {
+        return (Math.abs(height(this.root.left)-height(this.root.right)) <= 1);
+    }
+
     return {
         root,
         mergeSort,
@@ -189,7 +193,8 @@ function Tree() {
         preOrder, 
         postOrder,
         height,
-        depth
+        depth,
+        isBalanced
     };
 }
 
@@ -238,3 +243,5 @@ console.log(prettyPrint(tree.root));
 
 // console.log('height = ' + tree.height(tree.findNode(tree.root, 4)));
 // console.log('depth = ' + tree.depth(5));
+
+console.log(tree.isBalanced());
