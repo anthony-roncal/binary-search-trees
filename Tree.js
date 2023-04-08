@@ -166,6 +166,16 @@ function Tree() {
         return height;
     }
 
+    function depth(node) {
+        let depth = 0;
+        let current = this.root;
+        while(node !== current.data) {
+            (current.data > node) ? current = current.left : current = current.right;
+            depth++;
+        }
+        return depth;
+    }
+
     return {
         root,
         mergeSort,
@@ -178,7 +188,8 @@ function Tree() {
         inOrder,
         preOrder, 
         postOrder,
-        height
+        height,
+        depth
     };
 }
 
@@ -226,3 +237,4 @@ console.log(prettyPrint(tree.root));
 // tree.postOrder(tree.root);
 
 // console.log('height = ' + tree.height(tree.findNode(tree.root, 4)));
+// console.log('depth = ' + tree.depth(5));
