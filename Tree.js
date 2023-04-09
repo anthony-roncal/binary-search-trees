@@ -1,6 +1,7 @@
 function Tree() {
 
     let root = null;
+    let traverseArray = [];
 
     function buildTree(array, start, end) {
         if(start > end)
@@ -119,11 +120,12 @@ function Tree() {
             if(root.left) {
                 inOrder(root.left);
             }
-            (func) ? func(root.data) : console.log(root.data);
+            (func) ? func(root.data) : traverseArray.push(root.data);
             if(root.right) {
                 inOrder(root.right);
             }
         }
+        return traverseArray;
     }
 
     function preOrder(root, func) {
@@ -154,16 +156,28 @@ function Tree() {
         }
     }
 
+    // NEEDS REWORK
     function height(node) {
-        let height = 0;
-        while(node.left || node.right) {
-            height++;
-            if(node.left) 
-                node = node.left;
-            else if(node.right)
-                node = node.right;
+        let returnHeight = 0;
+        if(node.left && node.right) {
+            returnHeight++;
+            left = node.left;
+            let leftHeight = height(left);
+            right = node.right;
+            let rightHeight = height(right);
+            (leftHeight > rightHeight) ? returnHeight += leftHeight : returnHeight += rightHeight;
         }
-        return height;
+        else if(node.left) {
+            returnHeight++;
+            node = node.left;
+            returnHeight += height(node);
+        }
+        else if(node.right) {
+            returnHeight++;
+            node = node.right;
+            returnHeight += height(node);
+        }
+        return returnHeight;
     }
 
     function depth(node) {
@@ -180,6 +194,11 @@ function Tree() {
         return (Math.abs(height(this.root.left)-height(this.root.right)) <= 1);
     }
 
+    function rebalance() {
+        let array = inOrder(this.root);
+        return buildTree(array, 0, array.length-1);
+    }
+
     return {
         root,
         mergeSort,
@@ -194,7 +213,8 @@ function Tree() {
         postOrder,
         height,
         depth,
-        isBalanced
+        isBalanced,
+        rebalance
     };
 }
 
@@ -244,4 +264,17 @@ console.log(prettyPrint(tree.root));
 // console.log('height = ' + tree.height(tree.findNode(tree.root, 4)));
 // console.log('depth = ' + tree.depth(5));
 
-console.log(tree.isBalanced());
+console.log('tree is balanced = ' + tree.isBalanced());
+tree.insertNode(tree.root, 150);
+tree.insertNode(tree.root, 160);
+tree.insertNode(tree.root, 170);
+tree.insertNode(tree.root, 180);
+console.log(prettyPrint(tree.root));
+console.log('tree is balanced = ' + tree.isBalanced());
+tree.root = tree.rebalance();
+console.log(prettyPrint(tree.root));
+console.log('tree is balanced = ' + tree.isBalanced());
+console.log(tree.levelOrder(tree.root));
+tree.inOrder(tree.root);
+tree.preOrder(tree.root);
+tree.postOrder(tree.root);
