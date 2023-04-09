@@ -156,7 +156,6 @@ function Tree() {
         }
     }
 
-    // NEEDS REWORK
     function height(node) {
         let returnHeight = 0;
         if(node.left && node.right) {
