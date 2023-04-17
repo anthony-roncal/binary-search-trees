@@ -85,7 +85,6 @@ function Tree() {
     function findNode(root, data) {
         if(root === null)
             return root;
-
         if(root.data === data)
             return root;
         else if(root.data > data)
@@ -113,47 +112,55 @@ function Tree() {
         return data;
     }
 
-    function inOrder(root, func) {
+    function inOrder(root, isFirstCall) {
+        if(isFirstCall)
+            traverseArray = [];
         if(root === null) 
             return;
         else {
             if(root.left) {
-                inOrder(root.left);
+                inOrder(root.left, false);
             }
-            (func) ? func(root.data) : traverseArray.push(root.data);
+            traverseArray.push(root.data);
             if(root.right) {
-                inOrder(root.right);
+                inOrder(root.right, false);
             }
         }
         return traverseArray;
     }
 
-    function preOrder(root, func) {
+    function preOrder(root, isFirstCall) {
+        if(isFirstCall)
+            traverseArray = [];
         if(root === null) 
             return;
         else {
-            (func) ? func(root.data) : console.log(root.data);
+            traverseArray.push(root.data);
             if(root.left) {
-                preOrder(root.left);
+                preOrder(root.left, false);
             }
             if(root.right) {
-                preOrder(root.right);
+                preOrder(root.right, false);
             }
         }
+        return traverseArray;
     }
 
-    function postOrder(root, func) {
+    function postOrder(root, isFirstCall) {
+        if(isFirstCall)
+            traverseArray = [];
         if(root === null) 
             return;
         else {
             if(root.left) {
-                postOrder(root.left);
+                postOrder(root.left, false);
             }
             if(root.right) {
-                postOrder(root.right);
+                postOrder(root.right, false);
             }
-            (func) ? func(root.data) : console.log(root.data);
+            traverseArray.push(root.data);
         }
+        return traverseArray;
     }
 
     function height(node) {
@@ -179,11 +186,11 @@ function Tree() {
         return returnHeight;
     }
 
-    function depth(node) {
+    function depth(data) {
         let depth = 0;
         let current = this.root;
-        while(node !== current.data) {
-            (current.data > node) ? current = current.left : current = current.right;
+        while(data !== current.data) {
+            (current.data > data) ? current = current.left : current = current.right;
             depth++;
         }
         return depth;
@@ -194,7 +201,7 @@ function Tree() {
     }
 
     function rebalance() {
-        let array = inOrder(this.root);
+        let array = inOrder(this.root, true);
         return buildTree(array, 0, array.length-1);
     }
 
@@ -216,6 +223,8 @@ function Tree() {
         rebalance
     };
 }
+
+module.exports = Tree;
 
 const nodeFactory = (data) => {
     return {
@@ -240,40 +249,3 @@ const prettyPrint = (node, prefix = '', isLeft = true) => {
       prettyPrint(node.left, `${prefix}${isLeft ? '    ' : '│   '}`, true);
     }
   }
-
-let tree = Tree();
-let testArray = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
-testArray = tree.mergeSort(tree.removeDuplicates(testArray));
-tree.root = tree.buildTree(testArray, 0, testArray.length-1);
-console.log(prettyPrint(tree.root));
-
-// tree.insertNode(tree.root, 15);
-// console.log(prettyPrint(tree.root));
-
-// tree.deleteNode(tree.root, 7);
-// console.log(prettyPrint(tree.root));
-
-// console.log(tree.findNode(tree.root, 4));
-
-// console.log(tree.levelOrder(tree.root));
-// tree.inOrder(tree.root);
-// tree.preOrder(tree.root);
-// tree.postOrder(tree.root);
-
-// console.log('height = ' + tree.height(tree.findNode(tree.root, 4)));
-// console.log('depth = ' + tree.depth(5));
-
-console.log('tree is balanced = ' + tree.isBalanced());
-tree.insertNode(tree.root, 150);
-tree.insertNode(tree.root, 160);
-tree.insertNode(tree.root, 170);
-tree.insertNode(tree.root, 180);
-console.log(prettyPrint(tree.root));
-console.log('tree is balanced = ' + tree.isBalanced());
-tree.root = tree.rebalance();
-console.log(prettyPrint(tree.root));
-console.log('tree is balanced = ' + tree.isBalanced());
-console.log(tree.levelOrder(tree.root));
-tree.inOrder(tree.root);
-tree.preOrder(tree.root);
-tree.postOrder(tree.root);
